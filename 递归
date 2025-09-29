@@ -1,0 +1,106 @@
+1. 递归的本质是什么？
+一句话：函数调用自己，用小问题解决大问题。
+它包含三个核心要素：
+（1）递归定义（函数的意义）
+dfs(node) 要清楚它代表什么意思，比如：
+返回某个值（最大深度、路径和…）
+或者做某件事（统计、遍历）
+
+（2）终止条件
+什么时候不能再往下递归？
+在二叉树题里通常是：if node is None: return ...
+
+（3）递归关系（拆解子问题）
+当前节点的问题 = 左子树的问题 + 右子树的问题
+这就是二叉树题能用递归的原因。
+
+👉 所以递归其实就是：定义清楚函数作用 → 确定停止点 → 拆解子问题 → 自己调用自己。
+
+2. 二叉树递归的两种套路
+在二叉树题里，递归函数大致分为两类：
+(1) 有返回值型（函数返回结果）
+函数的定义：给我一个节点，返回某个计算结果。
+比如 最大深度：
+def maxDepth(root):
+    if not root:
+        return 0
+    left = maxDepth(root.left)
+    right = maxDepth(root.right)
+    return max(left, right) + 1
+定义：maxDepth(node) = 以 node 为根的最大深度
+终止条件：node 为空，深度 = 0
+递归关系：深度 = 左右子树深度的最大值 + 1
+
+(2) 无返回值型（函数做事）
+函数的定义：给我一个节点和额外参数，我帮你遍历并收集答案。
+比如 统计好节点：
+def dfs(node, pre):
+    if not node:
+        return
+    if node.val >= pre:
+        self.ans += 1
+    dfs(node.left, max(pre, node.val))
+    dfs(node.right, max(pre, node.val))
+定义：dfs(node, pre) = 遍历从当前节点出发的路径，统计好节点
+终止条件：node 为空，直接返回
+递归关系：左右子树继续递归
+
+3. 为什么二叉树特别适合递归？
+因为二叉树天然满足“结构相似”：一棵树的左子树、右子树本身也是一棵树，所以问题可以自然地分解成左右子树的子问题
+例子：最大深度
+      A
+     / \
+    B   C
+maxDepth(A)
+= 1 + max(maxDepth(B), maxDepth(C))
+自然递归！
+
+4. 如何理解递归过程？
+很多人晕是因为看不到递归的展开。
+👉 技巧：模拟递归调用栈。
+比如 maxDepth([3,9,20,null,null,15,7])
+maxDepth(3)
+ -> maxDepth(9)
+     -> None -> 0
+     -> None -> 0
+     return 1
+ -> maxDepth(20)
+     -> maxDepth(15)
+         -> None -> 0
+         -> None -> 0
+         return 1
+     -> maxDepth(7)
+         -> None -> 0
+         -> None -> 0
+         return 1
+     return 2
+return 3
+结果：最大深度 = 3。
+画出来其实就是函数调用栈一层层压栈和返回。
+
+5. 二叉树题递归的固定模板
+以后写递归题时，可以套这两个模板：
+✅ 有返回值型模板（计算结果）
+def dfs(node) -> int:
+    if not node:
+        return 0
+    left = dfs(node.left)
+    right = dfs(node.right)
+    return max(left, right) + 1
+
+✅ 无返回值型模板（遍历做事）
+def dfs(node, extra):
+    if not node:
+        return
+    # 在这里对 node 做点事
+    dfs(node.left, new_extra)
+    dfs(node.right, new_extra)
+
+6. 总结
+递归本质：函数调用自己，用小问题解决大问
+关键要素：函数定义、终止条件、递归关系
+二叉树常见：
+（1）有返回值型（最大深度、路径和）
+（2）无返回值型（收集答案、统计数量）
+
+思考方式：把 dfs(node) 当成“黑箱函数”，只关心它的定义，不要去追递归细节。
