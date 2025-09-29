@@ -58,25 +58,38 @@ maxDepth(A)
 4. 如何理解递归过程？
 很多人晕是因为看不到递归的展开。
 👉 技巧：模拟递归调用栈。
-比如 maxDepth([3,9,20,null,null,15,7])
-maxDepth(3)
- -> maxDepth(9)
-     -> None -> 0
-     -> None -> 0
-     return 1
- -> maxDepth(20)
-     -> maxDepth(15)
-         -> None -> 0
-         -> None -> 0
-         return 1
-     -> maxDepth(7)
-         -> None -> 0
-         -> None -> 0
-         return 1
-     return 2
-return 3
-结果：最大深度 = 3。
-画出来其实就是函数调用栈一层层压栈和返回。
+模拟调用栈 就是把程序运行时真实发生的“函数调用帧被压栈/出栈”的过程 手动复现出来：每次调用把一个“帧”写下来（包含参数、本地变量、当前要做的事），遇到递归调用就把新帧压上去；遇到 return 就把当前帧弹出并把返回值写回到上一帧。
+例子：
+def fact(n):
+    if n == 0:
+        return 1
+    return n * fact(n-1)
+模拟 fact(3)：
+用列表表示栈（左端是栈底，右端是栈顶）：
+初始： push fact(3)
+Frame: fact(3) { waiting for fact(2) }
+执行到 fact(3) 的 return → 需要 fact(2)，所以 push fact(2)
+Stack: fact(3), fact(2)
+
+fact(2) 需要 fact(1)，push fact(1)
+Stack: fact(3), fact(2), fact(1)
+
+fact(1) 需要 fact(0), push fact(0)
+Stack: fact(3), fact(2), fact(1), fact(0)
+
+fact(0) 碰到 base case，直接 return 1。
+
+pop fact(0)，把 1 返回给 fact(1)
+
+fact(1) 收到 fact(0)=1，计算 1 * 1 = 1，return 1。
+
+pop fact(1)，把 1 返回给 fact(2)
+
+fact(2) 收到 1，计算 2 * 1 = 2，返回 2。pop。
+
+fact(3) 收到 2，计算 3 * 2 = 6，返回 6。结束。
+
+这个过程很直观：你把 “调用链” 一层层压进去，然后从最深处一层层弹出来并计算。
 
 5. 二叉树题递归的固定模板
 以后写递归题时，可以套这两个模板：
