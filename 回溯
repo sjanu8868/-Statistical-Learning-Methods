@@ -1,0 +1,65 @@
+回溯是一种算法思想，它的典型特征是：👉 在递归的过程中，不仅「深入」，还要「撤销选择」回到上一步，再尝试别的路径。
+换句话说，回溯依赖递归来实现。
+常见的场景：组合、全排列、数独、N 皇后。
+
+1. 定义
+DFS（Depth-First Search，深度优先搜索）
+👉 一条路走到黑，直到不能走为止，再回溯，尝试其他路径。
+数据结构：栈（一般用递归实现，递归栈就相当于栈）。
+
+BFS（Breadth-First Search，广度优先搜索）
+👉 一层一层往外扩展，先访问所有离起点近的，再访问更远的。
+数据结构：队列（用 collections.deque）。
+
+2. 遍历顺序对比
+以二叉树为例：
+        1
+       / \
+      2   3
+     / \
+    4   5
+DFS 前序遍历 (递归或栈实现)
+访问顺序：1 → 2 → 4 → 5 → 3
+（一路往左，走到不能走再回退）
+
+BFS 层序遍历 (队列实现)
+访问顺序：1 → 2 → 3 → 4 → 5
+（先访问第一层，再访问第二层，再第三层）
+
+3. 代码对比
+DFS（递归版）
+def dfs(root):
+    if not root:
+        return
+    print(root.val)
+    dfs(root.left)
+    dfs(root.right)
+
+BFS（队列版）
+from collections import deque
+def bfs(root):
+    if not root:
+        return
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        print(node.val)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+
+4. 使用场景
+特点	DFS	BFS
+思路	一条路走到底，再回溯	一圈一圈向外扩展
+数据结构	栈（递归或显式栈）	队列
+适合场景	✅ 需要找是否存在路径、求所有解（回溯问题、排列组合、迷宫路径）	✅ 需要找最短路径、层级关系（树的层序遍历、图的最短路）
+空间复杂度	O(h)，树的高度（递归栈）	O(w)，最宽层的节点数（队列）
+
+5. 举个生活类比 🌍
+DFS：像迷宫里走路，你一条路一直走到底，如果撞墙了，再往回退，换一条路。
+BFS：像水波一样扩散，先把周围一圈都走完，再走更远的一圈。
+
+👉 总结：
+DFS 更像是「深挖」，适合找所有解、回溯类问题。
+BFS 更像是「层层推进」，适合找最短路径、分层遍历。
